@@ -76,39 +76,13 @@ namespace DbImporter
 
         }
 
-
-        private void AddComboBoxColumn()
-        {
-            // Create a DataGridViewComboBoxColumn
-            DataGridViewComboBoxColumn comboBoxColumn = new DataGridViewComboBoxColumn
-            {
-                HeaderText = "DatabaseColumnName",
-                Name = "DatabaseColumnName",
-                DataPropertyName = "DatabaseColumnName", // Bind to the property in ColInfo class
-                DataSource = columnsOftable, // Provide data source for ComboBox items
-                Width = 300
-            };
-
-
-            // Remove the column if it already exists
-
-            foreach (DataGridViewRow row in gridShowColumns.Rows)
-            {
-                row.Cells[4].Value = null;
-            }
-            gridShowColumns.Columns.RemoveAt(4);
-
-            // Insert the ComboBox column at the specified index
-            gridShowColumns.Columns.Insert(4, comboBoxColumn);
-        }
-
-        private void comboTables_SelectedIndexChanged(object sender, EventArgs e)
+        private async void comboTables_SelectedIndexChanged(object sender, EventArgs e)
         {
             if (comboTables.SelectedIndex == 0)
                 return;
 
             TableName = comboTables.SelectedItem.ToString();
-            columnsOftable = SqlManager.GetTableColumns(TableName, ConnectionString);
+            columnsOftable = await SqlManager.GetTableColumns(TableName ?? "", ConnectionString);
             AddComboBoxColumn();
         }
 
@@ -137,6 +111,17 @@ namespace DbImporter
                     return;
                 }
 
+                if (rdtypetableNew.Checked)
+                {
+                    if (string.IsNullOrEmpty(txtTableName.Text))
+                    {
+                        loading.Visible = false;
+                        MessageBox.Show("Table name is empty", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    TableName = txtTableName.Text;
+                }
+
                 if (string.IsNullOrEmpty(TableName))
                 {
                     loading.Visible = false;
@@ -151,12 +136,17 @@ namespace DbImporter
                     return;
                 }
 
-                //if (info.Any(x => string.IsNullOrEmpty(x.DatabaseColumnName)))
-                //{
-                //    loading.Visible = false;
-                //    MessageBox.Show("Some Of Column mapping is empty", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                //    return;
-                //}
+                if (rdtypetableNew.Checked)
+                {
+                    var check = await SqlManager.CreateTable(ConnectionString, TableName, info);
+
+                    if (!check)
+                    {
+                        loading.Visible = false;
+                        MessageBox.Show("Create New Table Problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
 
                 status = await SqlManager.InsertBulk(ConnectionString, TableName, info, dataTable);
             });
@@ -164,12 +154,89 @@ namespace DbImporter
             if (status)
             {
                 MessageBox.Show("Excel Imported to Sql Server Successfully", "Imported", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                ExcelfilePath = string.Empty;
+                lblLocation.Text = string.Empty;
+                txtTableName.Text = string.Empty;
+                TableName = string.Empty;
+                comboTables.SelectedIndex = 0;
+                gridShowColumns.Rows.Clear();
             }
-            else
-            {
-                MessageBox.Show("Something Get Wrong", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+
             loading.Visible = false;
+
+        }
+
+        private void rdtypetableSelect_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!rdtypetableSelect.Checked) return;
+
+            txtTableName.Enabled = false;
+            comboTables.Enabled = true;
+            AddComboBoxColumn();
+        }
+
+
+
+        private void rdtypetableNew_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!rdtypetableNew.Checked) return;
+
+            txtTableName.Enabled = true;
+            comboTables.Enabled = false;
+            AddTextBoxColumn();
+        }
+
+        private void AddComboBoxColumn()
+        {
+            // Create a DataGridViewComboBoxColumn
+            DataGridViewComboBoxColumn comboBoxColumn = new DataGridViewComboBoxColumn
+            {
+                HeaderText = "DatabaseColumnName",
+                Name = "DatabaseColumnName",
+                DataPropertyName = "DatabaseColumnName", // Bind to the property in ColInfo class
+                DataSource = columnsOftable, // Provide data source for ComboBox items
+                Width = 250
+            };
+
+
+            // Remove the column if it already exists
+
+            foreach (DataGridViewRow row in gridShowColumns.Rows)
+            {
+                row.Cells[4].Value = null;
+            }
+            gridShowColumns.Columns.RemoveAt(4);
+
+            // Insert the ComboBox column at the specified index
+            gridShowColumns.Columns.Insert(4, comboBoxColumn);
+        }
+
+        private void AddTextBoxColumn()
+        {
+            // Create a DataGridViewTextBoxColumn
+            DataGridViewTextBoxColumn textBoxColumn = new DataGridViewTextBoxColumn
+            {
+                HeaderText = "DatabaseColumnName",
+                Name = "DatabaseColumnName",
+                DataPropertyName = "DatabaseColumnName", // Bind to the property in ColInfo class
+                Width = 250,
+            };
+
+
+            // Remove the column if it already exists
+
+            foreach (DataGridViewRow row in gridShowColumns.Rows)
+            {
+                row.Cells[4].Value = null;
+            }
+            gridShowColumns.Columns.RemoveAt(4);
+
+            // Insert the ComboBox column at the specified index
+            gridShowColumns.Columns.Insert(4, textBoxColumn);
+        }
+
+        private void txtTableName_TextChanged(object sender, EventArgs e)
+        {
 
         }
     }

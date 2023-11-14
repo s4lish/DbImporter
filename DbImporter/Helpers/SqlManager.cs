@@ -31,19 +31,19 @@ namespace DbImporter.Helpers
 
         }
 
-        public static List<string> GetTableColumns(string tableName, string connectionString)
+        public static async Task<List<string>> GetTableColumns(string tableName, string connectionString)
         {
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                connection.Open();
+                await connection.OpenAsync();
 
                 // Query to get column names
                 string query = $"SELECT COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}'";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    using (SqlDataReader reader = command.ExecuteReader())
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
                         List<string> columnNames = new List<string>();
 
@@ -61,6 +61,80 @@ namespace DbImporter.Helpers
 
         }
 
+        public static async Task<bool> CheckTableExist(string connectionString, string tableName)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    // Check if the table exists
+                    using (SqlCommand command = new SqlCommand($"IF OBJECT_ID('{tableName}', 'U') IS NOT NULL SELECT 1 ELSE SELECT 0", connection))
+                    {
+                        object? result = await command.ExecuteScalarAsync();
+
+                        if (result != null && result != DBNull.Value)
+                        {
+                            return Convert.ToInt32(result) == 1;
+                        }
+                    }
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Problem");
+                return false;
+            }
+
+        }
+
+        public static async Task<bool> CreateTable(string connectionString, string tableName, List<ColInfo> colInfos)
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(connectionString))
+                {
+                    await connection.OpenAsync();
+
+                    // Check if the table already exists
+                    if (await CheckTableExist(connectionString, tableName))
+                    {
+                        MessageBox.Show($"Table '{tableName}' already exists.", "Info");
+                        return false;
+                    }
+                    //$"CREATE TABLE {tableName} (ID INT PRIMARY KEY, Column1 VARCHAR(50), Column2 INT)"
+                    string query = $"CREATE TABLE {tableName} (";
+
+                    foreach (ColInfo colInfo in colInfos)
+                    {
+                        if (string.IsNullOrEmpty(colInfo.DatabaseColumnName)) continue;
+                        query += $"{colInfo.DatabaseColumnName} {colInfo.DatabaseColumnType} NULL, ";
+                    }
+
+                    query = query.Substring(0, query.Length - 1);
+
+                    query += ")";
+
+                    // Create the table
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        await command.ExecuteNonQueryAsync();
+                        MessageBox.Show($"Table '{tableName}' created successfully.", "Info");
+                    }
+
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Problem");
+                return false;
+            }
+        }
+
         public static async Task<bool> InsertBulk(string connectionString, string tableName, List<ColInfo> Colinfos, DataTable dataTable)
         {
             try
@@ -69,7 +143,7 @@ namespace DbImporter.Helpers
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    connection.Open();
+                    await connection.OpenAsync();
 
                     using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
                     {

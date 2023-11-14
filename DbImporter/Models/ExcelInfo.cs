@@ -16,5 +16,24 @@
         public string FirstValue { get; set; } = string.Empty;
         public Type? type { get; set; }
         public string? DatabaseColumnName { get; set; } = string.Empty;
+        public string? DatabaseColumnType
+        {
+            get
+            {
+                if (type == null)
+                    return "";
+
+                return type switch
+                {
+                    Type t when t == typeof(string) => "[nvarchar](max)",
+                    Type t when t == typeof(int) => "[int]",
+                    Type t when t == typeof(DateTime) => "[datetime]",
+                    Type t when t == typeof(double) => "[float]",
+                    Type t when t == typeof(float) => "[float]",
+                    _ => "[nvarchar](max)"
+                };
+            }
+        }
+
     }
 }

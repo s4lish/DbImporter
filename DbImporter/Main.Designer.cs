@@ -37,6 +37,11 @@
             label1 = new Label();
             lbl1 = new Label();
             gridShowColumns = new DataGridView();
+            Number = new DataGridViewTextBoxColumn();
+            HeaderName = new DataGridViewTextBoxColumn();
+            FirstValue = new DataGridViewTextBoxColumn();
+            type = new DataGridViewTextBoxColumn();
+            DatabaseColumnName = new DataGridViewTextBoxColumn();
             txtServer = new TextBox();
             label2 = new Label();
             txtUsername = new TextBox();
@@ -54,11 +59,6 @@
             rdtypetableNew = new RadioButton();
             txtTableName = new TextBox();
             loading = new ProgressBar();
-            Number = new DataGridViewTextBoxColumn();
-            HeaderName = new DataGridViewTextBoxColumn();
-            FirstValue = new DataGridViewTextBoxColumn();
-            type = new DataGridViewTextBoxColumn();
-            DatabaseColumnName = new DataGridViewTextBoxColumn();
             panelExcelInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridShowColumns).BeginInit();
             SuspendLayout();
@@ -141,167 +141,11 @@
             gridShowColumns.BackgroundColor = SystemColors.ButtonFace;
             gridShowColumns.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             gridShowColumns.Columns.AddRange(new DataGridViewColumn[] { Number, HeaderName, FirstValue, type, DatabaseColumnName });
-            gridShowColumns.Location = new Point(12, 221);
+            gridShowColumns.Location = new Point(12, 215);
             gridShowColumns.Name = "gridShowColumns";
             gridShowColumns.RowTemplate.Height = 25;
-            gridShowColumns.Size = new Size(976, 465);
+            gridShowColumns.Size = new Size(994, 471);
             gridShowColumns.TabIndex = 3;
-            // 
-            // txtServer
-            // 
-            txtServer.Location = new Point(67, 144);
-            txtServer.Name = "txtServer";
-            txtServer.Size = new Size(100, 23);
-            txtServer.TabIndex = 4;
-            txtServer.Text = ".";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(10, 126);
-            label2.Name = "label2";
-            label2.Size = new Size(142, 15);
-            label2.TabIndex = 5;
-            label2.Text = "Sql Server Database Login";
-            // 
-            // txtUsername
-            // 
-            txtUsername.Location = new Point(244, 144);
-            txtUsername.Name = "txtUsername";
-            txtUsername.Size = new Size(100, 23);
-            txtUsername.TabIndex = 6;
-            txtUsername.Text = "sa";
-            // 
-            // txtPassword
-            // 
-            txtPassword.Location = new Point(411, 144);
-            txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(100, 23);
-            txtPassword.TabIndex = 7;
-            txtPassword.Text = "ali@1368";
-            // 
-            // txtDatabase
-            // 
-            txtDatabase.Location = new Point(578, 144);
-            txtDatabase.Name = "txtDatabase";
-            txtDatabase.Size = new Size(100, 23);
-            txtDatabase.TabIndex = 8;
-            txtDatabase.Text = "VosulGas";
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(12, 147);
-            label3.Name = "label3";
-            label3.Size = new Size(55, 15);
-            label3.TabIndex = 9;
-            label3.Text = "Address :";
-            // 
-            // label4
-            // 
-            label4.AutoSize = true;
-            label4.Location = new Point(174, 148);
-            label4.Name = "label4";
-            label4.Size = new Size(69, 15);
-            label4.TabIndex = 10;
-            label4.Text = "User name :";
-            // 
-            // label5
-            // 
-            label5.AutoSize = true;
-            label5.Location = new Point(348, 147);
-            label5.Name = "label5";
-            label5.Size = new Size(63, 15);
-            label5.TabIndex = 11;
-            label5.Text = "Password :";
-            // 
-            // label6
-            // 
-            label6.AutoSize = true;
-            label6.Location = new Point(517, 148);
-            label6.Name = "label6";
-            label6.Size = new Size(61, 15);
-            label6.TabIndex = 12;
-            label6.Text = "Database :";
-            // 
-            // SQLConnect
-            // 
-            SQLConnect.Location = new Point(705, 144);
-            SQLConnect.Name = "SQLConnect";
-            SQLConnect.Size = new Size(140, 23);
-            SQLConnect.TabIndex = 13;
-            SQLConnect.Text = "Connect";
-            SQLConnect.UseVisualStyleBackColor = true;
-            SQLConnect.Click += SQLConnect_Click;
-            // 
-            // comboTables
-            // 
-            comboTables.FormattingEnabled = true;
-            comboTables.Location = new Point(102, 184);
-            comboTables.Name = "comboTables";
-            comboTables.Size = new Size(260, 23);
-            comboTables.TabIndex = 14;
-            comboTables.SelectedIndexChanged += comboTables_SelectedIndexChanged;
-            // 
-            // lblStatus
-            // 
-            lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(849, 148);
-            lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(16, 15);
-            lblStatus.TabIndex = 16;
-            lblStatus.Text = "...";
-            // 
-            // button1
-            // 
-            button1.Location = new Point(772, 41);
-            button1.Name = "button1";
-            button1.Size = new Size(216, 23);
-            button1.TabIndex = 17;
-            button1.Text = "Import To Database";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
-            // 
-            // rdtypetableSelect
-            // 
-            rdtypetableSelect.AutoSize = true;
-            rdtypetableSelect.Checked = true;
-            rdtypetableSelect.Location = new Point(10, 185);
-            rdtypetableSelect.Name = "rdtypetableSelect";
-            rdtypetableSelect.Size = new Size(92, 19);
-            rdtypetableSelect.TabIndex = 18;
-            rdtypetableSelect.TabStop = true;
-            rdtypetableSelect.Tag = "tableType";
-            rdtypetableSelect.Text = "Select Table :";
-            rdtypetableSelect.UseVisualStyleBackColor = true;
-            // 
-            // rdtypetableNew
-            // 
-            rdtypetableNew.AutoSize = true;
-            rdtypetableNew.Location = new Point(430, 185);
-            rdtypetableNew.Name = "rdtypetableNew";
-            rdtypetableNew.Size = new Size(85, 19);
-            rdtypetableNew.TabIndex = 19;
-            rdtypetableNew.Tag = "tableType";
-            rdtypetableNew.Text = "New Table :";
-            rdtypetableNew.UseVisualStyleBackColor = true;
-            // 
-            // txtTableName
-            // 
-            txtTableName.Enabled = false;
-            txtTableName.Location = new Point(517, 181);
-            txtTableName.Name = "txtTableName";
-            txtTableName.PlaceholderText = "table name";
-            txtTableName.Size = new Size(189, 23);
-            txtTableName.TabIndex = 20;
-            // 
-            // loading
-            // 
-            loading.Location = new Point(772, 73);
-            loading.Name = "loading";
-            loading.Size = new Size(216, 13);
-            loading.TabIndex = 21;
-            loading.Visible = false;
             // 
             // Number
             // 
@@ -338,13 +182,172 @@
             DatabaseColumnName.DataPropertyName = "DatabaseColumnName";
             DatabaseColumnName.HeaderText = "DatabaseColumnName";
             DatabaseColumnName.Name = "DatabaseColumnName";
-            DatabaseColumnName.Width = 300;
+            DatabaseColumnName.Width = 250;
+            // 
+            // txtServer
+            // 
+            txtServer.Location = new Point(67, 134);
+            txtServer.Name = "txtServer";
+            txtServer.Size = new Size(100, 23);
+            txtServer.TabIndex = 4;
+            txtServer.Text = ".";
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(10, 116);
+            label2.Name = "label2";
+            label2.Size = new Size(142, 15);
+            label2.TabIndex = 5;
+            label2.Text = "Sql Server Database Login";
+            // 
+            // txtUsername
+            // 
+            txtUsername.Location = new Point(244, 134);
+            txtUsername.Name = "txtUsername";
+            txtUsername.Size = new Size(100, 23);
+            txtUsername.TabIndex = 6;
+            txtUsername.Text = "sa";
+            // 
+            // txtPassword
+            // 
+            txtPassword.Location = new Point(411, 134);
+            txtPassword.Name = "txtPassword";
+            txtPassword.Size = new Size(100, 23);
+            txtPassword.TabIndex = 7;
+            txtPassword.Text = "ali@1368";
+            // 
+            // txtDatabase
+            // 
+            txtDatabase.Location = new Point(578, 134);
+            txtDatabase.Name = "txtDatabase";
+            txtDatabase.Size = new Size(100, 23);
+            txtDatabase.TabIndex = 8;
+            txtDatabase.Text = "VosulGas";
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(12, 137);
+            label3.Name = "label3";
+            label3.Size = new Size(55, 15);
+            label3.TabIndex = 9;
+            label3.Text = "Address :";
+            // 
+            // label4
+            // 
+            label4.AutoSize = true;
+            label4.Location = new Point(174, 138);
+            label4.Name = "label4";
+            label4.Size = new Size(69, 15);
+            label4.TabIndex = 10;
+            label4.Text = "User name :";
+            // 
+            // label5
+            // 
+            label5.AutoSize = true;
+            label5.Location = new Point(348, 137);
+            label5.Name = "label5";
+            label5.Size = new Size(63, 15);
+            label5.TabIndex = 11;
+            label5.Text = "Password :";
+            // 
+            // label6
+            // 
+            label6.AutoSize = true;
+            label6.Location = new Point(517, 138);
+            label6.Name = "label6";
+            label6.Size = new Size(61, 15);
+            label6.TabIndex = 12;
+            label6.Text = "Database :";
+            // 
+            // SQLConnect
+            // 
+            SQLConnect.Location = new Point(705, 134);
+            SQLConnect.Name = "SQLConnect";
+            SQLConnect.Size = new Size(140, 23);
+            SQLConnect.TabIndex = 13;
+            SQLConnect.Text = "Connect";
+            SQLConnect.UseVisualStyleBackColor = true;
+            SQLConnect.Click += SQLConnect_Click;
+            // 
+            // comboTables
+            // 
+            comboTables.FormattingEnabled = true;
+            comboTables.Location = new Point(102, 174);
+            comboTables.Name = "comboTables";
+            comboTables.Size = new Size(260, 23);
+            comboTables.TabIndex = 14;
+            comboTables.SelectedIndexChanged += comboTables_SelectedIndexChanged;
+            // 
+            // lblStatus
+            // 
+            lblStatus.AutoSize = true;
+            lblStatus.Location = new Point(849, 138);
+            lblStatus.Name = "lblStatus";
+            lblStatus.Size = new Size(16, 15);
+            lblStatus.TabIndex = 16;
+            lblStatus.Text = "...";
+            // 
+            // button1
+            // 
+            button1.Location = new Point(772, 41);
+            button1.Name = "button1";
+            button1.Size = new Size(216, 23);
+            button1.TabIndex = 17;
+            button1.Text = "Import To Database";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // rdtypetableSelect
+            // 
+            rdtypetableSelect.AutoSize = true;
+            rdtypetableSelect.Checked = true;
+            rdtypetableSelect.Location = new Point(10, 175);
+            rdtypetableSelect.Name = "rdtypetableSelect";
+            rdtypetableSelect.Size = new Size(92, 19);
+            rdtypetableSelect.TabIndex = 18;
+            rdtypetableSelect.TabStop = true;
+            rdtypetableSelect.Tag = "tableType";
+            rdtypetableSelect.Text = "Select Table :";
+            rdtypetableSelect.UseVisualStyleBackColor = true;
+            rdtypetableSelect.CheckedChanged += rdtypetableSelect_CheckedChanged;
+            // 
+            // rdtypetableNew
+            // 
+            rdtypetableNew.AutoSize = true;
+            rdtypetableNew.Location = new Point(426, 175);
+            rdtypetableNew.Name = "rdtypetableNew";
+            rdtypetableNew.Size = new Size(85, 19);
+            rdtypetableNew.TabIndex = 19;
+            rdtypetableNew.Tag = "tableType";
+            rdtypetableNew.Text = "New Table :";
+            rdtypetableNew.UseVisualStyleBackColor = true;
+            rdtypetableNew.CheckedChanged += rdtypetableNew_CheckedChanged;
+            // 
+            // txtTableName
+            // 
+            txtTableName.Enabled = false;
+            txtTableName.Location = new Point(517, 175);
+            txtTableName.Name = "txtTableName";
+            txtTableName.PlaceholderText = "table name";
+            txtTableName.Size = new Size(189, 23);
+            txtTableName.TabIndex = 20;
+            txtTableName.TextChanged += txtTableName_TextChanged;
+            // 
+            // loading
+            // 
+            loading.Location = new Point(772, 73);
+            loading.Name = "loading";
+            loading.Size = new Size(216, 13);
+            loading.TabIndex = 21;
+            loading.Visible = false;
             // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 698);
+            ClientSize = new Size(1018, 698);
             Controls.Add(loading);
             Controls.Add(txtTableName);
             Controls.Add(rdtypetableNew);
