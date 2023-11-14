@@ -13,26 +13,27 @@ namespace DbImporter
             // Assuming you have a DataGridView named dataGridView1
         }
 
-        private string ExcelfilePath = string.Empty;
+        private string InputfilePath = string.Empty;
         private string ConnectionString = string.Empty;
         private List<string> tables = new();
         private List<SqlColumnInfo> columnsOftable = new();
         private string? TableName = string.Empty;
-        private ExcelInfo excelInfo = new();
+        private InputInfo inputInfo = new();
+        private FileTypeEnum fileTypeEnum;
         private void btnSelectExcel_Click(object sender, EventArgs e)
         {
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "c:\\";
-                openFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx";
+                openFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx|CSV files (*.csv)|*.csv|Json files (*.json)|*.json";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     //Get the path of specified file
-                    ExcelfilePath = openFileDialog.FileName;
+                    InputfilePath = openFileDialog.FileName;
 
                     //Read the contents of the file into a stream
                     //var fileStream = openFileDialog.OpenFile();
@@ -43,21 +44,49 @@ namespace DbImporter
                     //}
                 }
             }
-            lblLocation.Text = ExcelfilePath;
+            if (string.IsNullOrEmpty(InputfilePath)) return;
 
-            excelInfo = ExcelManager.GetExcelInfo(ExcelfilePath);
+            lblLocation.Text = InputfilePath;
 
-            if (!excelInfo.Status)
+            FileInfo fileInfo = new FileInfo(InputfilePath);
+
+
+            if (fileInfo.Extension == ".xlsx")
             {
-                MessageBox.Show("Excel has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                inputInfo = ExcelManager.GetExcelInfo(InputfilePath);
+
+                if (!inputInfo.Status)
+                {
+                    MessageBox.Show("Excel has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                fileTypeEnum = FileTypeEnum.Excel;
+            }
+            else if (fileInfo.Extension == ".csv")
+            {
+                inputInfo = CSVManager.GetCsvInfo(InputfilePath);
+                if (!inputInfo.Status)
+                {
+                    MessageBox.Show("csv file has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                fileTypeEnum = FileTypeEnum.CSV;
+
+            }
+            else
+            {
+                lblLocation.Text = string.Empty;
+                InputfilePath = string.Empty;
+                MessageBox.Show("Not Support yet");
                 return;
             }
 
-            lblRows.Text = excelInfo.RowCount.ToString();
-            lblColumns.Text = excelInfo.ColumnCount.ToString();
+
+            lblRows.Text = inputInfo.RowCount.ToString();
+            lblColumns.Text = inputInfo.ColumnCount.ToString();
             //lblLocation.Text = filePath;
 
-            gridShowColumns.DataSource = excelInfo.ColInfos;
+            gridShowColumns.DataSource = inputInfo.ColInfos;
         }
 
         private void SQLConnect_Click(object sender, EventArgs e)
@@ -92,7 +121,7 @@ namespace DbImporter
 
         private async void btnImport_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(ExcelfilePath) || string.IsNullOrEmpty(ConnectionString))
+            if (string.IsNullOrEmpty(InputfilePath) || string.IsNullOrEmpty(ConnectionString))
             {
                 MessageBox.Show("Excel path or Connection string is empty", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
@@ -104,8 +133,21 @@ namespace DbImporter
 
             await Task.Run(async () =>
             {
-
-                DataTable? dataTable = ExcelManager.GetExcelList(ExcelfilePath);
+                DataTable? dataTable = null;
+                if (fileTypeEnum == FileTypeEnum.Excel)
+                {
+                    dataTable = ExcelManager.GetExcelList(InputfilePath);
+                }
+                else if (fileTypeEnum == FileTypeEnum.CSV)
+                {
+                    dataTable = CSVManager.GetCsvList(InputfilePath);
+                }
+                else
+                {
+                    loading.Visible = false;
+                    MessageBox.Show("File Type Not Supported", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
 
                 if (dataTable == null)
                 {
@@ -132,7 +174,7 @@ namespace DbImporter
                     return;
                 }
 
-                if (excelInfo == null || !excelInfo.ColInfos.Any())
+                if (inputInfo == null || !inputInfo.ColInfos.Any())
                 {
                     loading.Visible = false;
                     MessageBox.Show("Table mapping info is empty", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -141,7 +183,7 @@ namespace DbImporter
 
                 if (rdtypetableNew.Checked)
                 {
-                    var check = await SqlManager.CreateTable(ConnectionString, TableName, excelInfo.ColInfos);
+                    var check = await SqlManager.CreateTable(ConnectionString, TableName, inputInfo.ColInfos, CheckPrimaryKey.Checked);
 
                     if (!check)
                     {
@@ -151,13 +193,13 @@ namespace DbImporter
                     }
                 }
 
-                status = await SqlManager.InsertBulk(ConnectionString, TableName, excelInfo.ColInfos, dataTable);
+                status = await SqlManager.InsertBulk(ConnectionString, TableName, inputInfo.ColInfos, dataTable);
             });
 
             if (status)
             {
                 MessageBox.Show("Excel Imported to Sql Server Successfully", "Imported", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                ExcelfilePath = string.Empty;
+                InputfilePath = string.Empty;
                 lblLocation.Text = string.Empty;
                 txtTableName.Text = string.Empty;
                 TableName = string.Empty;
@@ -176,6 +218,7 @@ namespace DbImporter
             TableName = string.Empty;
             txtTableName.Enabled = false;
             comboTables.Enabled = true;
+            CheckPrimaryKey.Enabled = false;
             AddComboBoxColumn();
         }
 
@@ -185,9 +228,12 @@ namespace DbImporter
         {
             if (!rdtypetableNew.Checked) return;
 
-            comboTables.SelectedIndex = 0;
+            if (comboTables.HasChildren)
+                comboTables.SelectedIndex = 0;
+
             TableName = string.Empty;
             txtTableName.Enabled = true;
+            CheckPrimaryKey.Enabled = true;
             comboTables.Enabled = false;
             AddTextBoxColumn();
         }

@@ -37,6 +37,11 @@
             label1 = new Label();
             lbl1 = new Label();
             gridShowColumns = new DataGridView();
+            Number = new DataGridViewTextBoxColumn();
+            HeaderName = new DataGridViewTextBoxColumn();
+            FirstValue = new DataGridViewTextBoxColumn();
+            type = new DataGridViewTextBoxColumn();
+            DatabaseColumnName = new DataGridViewTextBoxColumn();
             txtServer = new TextBox();
             label2 = new Label();
             txtUsername = new TextBox();
@@ -54,12 +59,7 @@
             rdtypetableNew = new RadioButton();
             txtTableName = new TextBox();
             loading = new ProgressBar();
-            Number = new DataGridViewTextBoxColumn();
-            HeaderName = new DataGridViewTextBoxColumn();
-            FirstValue = new DataGridViewTextBoxColumn();
-            type = new DataGridViewTextBoxColumn();
-            DatabaseColumnName = new DataGridViewTextBoxColumn();
-            DatabaseColumnType = new DataGridViewTextBoxColumn();
+            CheckPrimaryKey = new CheckBox();
             panelExcelInfo.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)gridShowColumns).BeginInit();
             SuspendLayout();
@@ -74,7 +74,7 @@
             btnSelectExcel.Name = "btnSelectExcel";
             btnSelectExcel.Size = new Size(140, 23);
             btnSelectExcel.TabIndex = 0;
-            btnSelectExcel.Text = "Excel Select";
+            btnSelectExcel.Text = "File Select";
             btnSelectExcel.UseVisualStyleBackColor = true;
             btnSelectExcel.Click += btnSelectExcel_Click;
             // 
@@ -141,12 +141,49 @@
             gridShowColumns.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             gridShowColumns.BackgroundColor = SystemColors.ButtonFace;
             gridShowColumns.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            gridShowColumns.Columns.AddRange(new DataGridViewColumn[] { Number, HeaderName, FirstValue, type, DatabaseColumnName, DatabaseColumnType });
+            gridShowColumns.Columns.AddRange(new DataGridViewColumn[] { Number, HeaderName, FirstValue, type, DatabaseColumnName });
             gridShowColumns.Location = new Point(12, 215);
             gridShowColumns.Name = "gridShowColumns";
             gridShowColumns.RowTemplate.Height = 25;
             gridShowColumns.Size = new Size(994, 471);
             gridShowColumns.TabIndex = 3;
+            // 
+            // Number
+            // 
+            Number.DataPropertyName = "Number";
+            Number.HeaderText = "Number";
+            Number.Name = "Number";
+            Number.ReadOnly = true;
+            // 
+            // HeaderName
+            // 
+            HeaderName.DataPropertyName = "HeaderName";
+            HeaderName.HeaderText = "HeaderName";
+            HeaderName.Name = "HeaderName";
+            HeaderName.ReadOnly = true;
+            HeaderName.Width = 250;
+            // 
+            // FirstValue
+            // 
+            FirstValue.DataPropertyName = "FirstValue";
+            FirstValue.HeaderText = "FirstValue";
+            FirstValue.Name = "FirstValue";
+            FirstValue.ReadOnly = true;
+            FirstValue.Width = 150;
+            // 
+            // type
+            // 
+            type.DataPropertyName = "type";
+            type.HeaderText = "type";
+            type.Name = "type";
+            type.ReadOnly = true;
+            // 
+            // DatabaseColumnName
+            // 
+            DatabaseColumnName.DataPropertyName = "DatabaseColumnName";
+            DatabaseColumnName.HeaderText = "DatabaseColumnName";
+            DatabaseColumnName.Name = "DatabaseColumnName";
+            DatabaseColumnName.Width = 250;
             // 
             // txtServer
             // 
@@ -306,55 +343,23 @@
             loading.TabIndex = 21;
             loading.Visible = false;
             // 
-            // Number
+            // CheckPrimaryKey
             // 
-            Number.DataPropertyName = "Number";
-            Number.HeaderText = "Number";
-            Number.Name = "Number";
-            Number.ReadOnly = true;
-            // 
-            // HeaderName
-            // 
-            HeaderName.DataPropertyName = "HeaderName";
-            HeaderName.HeaderText = "HeaderName";
-            HeaderName.Name = "HeaderName";
-            HeaderName.ReadOnly = true;
-            HeaderName.Width = 250;
-            // 
-            // FirstValue
-            // 
-            FirstValue.DataPropertyName = "FirstValue";
-            FirstValue.HeaderText = "FirstValue";
-            FirstValue.Name = "FirstValue";
-            FirstValue.ReadOnly = true;
-            FirstValue.Width = 150;
-            // 
-            // type
-            // 
-            type.DataPropertyName = "type";
-            type.HeaderText = "type";
-            type.Name = "type";
-            type.ReadOnly = true;
-            // 
-            // DatabaseColumnName
-            // 
-            DatabaseColumnName.DataPropertyName = "DatabaseColumnName";
-            DatabaseColumnName.HeaderText = "DatabaseColumnName";
-            DatabaseColumnName.Name = "DatabaseColumnName";
-            DatabaseColumnName.Width = 250;
-            // 
-            // DatabaseColumnType
-            // 
-            DatabaseColumnType.DataPropertyName = "DatabaseColumnType";
-            DatabaseColumnType.HeaderText = "DatabaseColumnType";
-            DatabaseColumnType.Name = "DatabaseColumnType";
-            DatabaseColumnType.ReadOnly = true;
+            CheckPrimaryKey.AutoSize = true;
+            CheckPrimaryKey.Enabled = false;
+            CheckPrimaryKey.Location = new Point(718, 175);
+            CheckPrimaryKey.Name = "CheckPrimaryKey";
+            CheckPrimaryKey.Size = new Size(127, 19);
+            CheckPrimaryKey.TabIndex = 22;
+            CheckPrimaryKey.Text = "Add Id Primary Key";
+            CheckPrimaryKey.UseVisualStyleBackColor = true;
             // 
             // Main
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1018, 698);
+            Controls.Add(CheckPrimaryKey);
             Controls.Add(loading);
             Controls.Add(txtTableName);
             Controls.Add(rdtypetableNew);
@@ -420,6 +425,6 @@
         private DataGridViewTextBoxColumn FirstValue;
         private DataGridViewTextBoxColumn type;
         private DataGridViewTextBoxColumn DatabaseColumnName;
-        private DataGridViewTextBoxColumn DatabaseColumnType;
+        private CheckBox CheckPrimaryKey;
     }
 }

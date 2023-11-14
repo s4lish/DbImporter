@@ -93,7 +93,7 @@ namespace DbImporter.Helpers
 
         }
 
-        public static async Task<bool> CreateTable(string connectionString, string tableName, List<ColInfo> colInfos)
+        public static async Task<bool> CreateTable(string connectionString, string tableName, List<ColInfo> colInfos, bool primaryKey)
         {
             try
             {
@@ -109,6 +109,11 @@ namespace DbImporter.Helpers
                     }
                     //$"CREATE TABLE {tableName} (ID INT PRIMARY KEY, Column1 VARCHAR(50), Column2 INT)"
                     string query = $"CREATE TABLE {tableName} (";
+
+                    if (primaryKey)
+                    {
+                        query += $"Id INT IDENTITY(1,1) PRIMARY KEY, ";
+                    }
 
                     foreach (ColInfo colInfo in colInfos)
                     {

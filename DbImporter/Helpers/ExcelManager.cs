@@ -6,9 +6,9 @@ namespace DbImporter.Helpers
 {
     public class ExcelManager
     {
-        public static ExcelInfo GetExcelInfo(string path)
+        public static InputInfo GetExcelInfo(string path)
         {
-            var info = new ExcelInfo() { Status = false };
+            var info = new InputInfo() { Status = false };
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using (var package = new ExcelPackage(new FileInfo(path)))
             {
@@ -36,7 +36,7 @@ namespace DbImporter.Helpers
 
         public static DataTable? GetExcelList(string path)
         {
-            var info = new ExcelInfo() { Status = false };
+            var info = new InputInfo() { Status = false };
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             using (var package = new ExcelPackage(new FileInfo(path)))
             {
