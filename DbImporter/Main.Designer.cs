@@ -333,7 +333,6 @@
             txtTableName.PlaceholderText = "table name";
             txtTableName.Size = new Size(189, 23);
             txtTableName.TabIndex = 20;
-            txtTableName.TextChanged += txtTableName_TextChanged;
             // 
             // loading
             // 

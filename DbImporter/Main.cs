@@ -159,7 +159,6 @@ namespace DbImporter
                 txtTableName.Text = string.Empty;
                 TableName = string.Empty;
                 comboTables.SelectedIndex = 0;
-                gridShowColumns.Rows.Clear();
             }
 
             loading.Visible = false;
@@ -235,9 +234,5 @@ namespace DbImporter
             gridShowColumns.Columns.Insert(4, textBoxColumn);
         }
 
-        private void txtTableName_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
