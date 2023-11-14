@@ -2,6 +2,8 @@
 
 This C# project allows you to import data from Excel, CSV, or JSON files into a SQL Server database. It provides the flexibility to either import data into an existing table with column mapping or create a new table.
 
+![Example Image](./main.jpg)
+
 ## Features
 
 - Import data from Excel, CSV, or JSON files.
