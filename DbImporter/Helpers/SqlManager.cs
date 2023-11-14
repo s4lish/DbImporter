@@ -31,7 +31,7 @@ namespace DbImporter.Helpers
 
         }
 
-        public static async Task<List<string>> GetTableColumns(string tableName, string connectionString)
+        public static async Task<List<SqlColumnInfo>> GetTableColumns(string tableName, string connectionString)
         {
 
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -45,14 +45,16 @@ namespace DbImporter.Helpers
                 {
                     using (SqlDataReader reader = await command.ExecuteReaderAsync())
                     {
-                        List<string> columnNames = new List<string>();
+                        List<SqlColumnInfo> columnNames = new List<SqlColumnInfo>();
 
-                        columnNames.Add("");
+                        columnNames.Add(new SqlColumnInfo { Name = "", Type = "" });
                         while (reader.Read())
                         {
-                            string columnName = reader["COLUMN_NAME"].ToString();
-                            string dataType = reader["DATA_TYPE"].ToString();
-                            columnNames.Add($"{columnName} ({dataType})");
+                            columnNames.Add(new SqlColumnInfo
+                            {
+                                Name = reader["COLUMN_NAME"].ToString(),
+                                Type = reader["DATA_TYPE"].ToString()
+                            });
                         }
                         return columnNames;
                     }

@@ -9,12 +9,16 @@ namespace DbImporter
         public Main()
         {
             InitializeComponent();
+
+            // Assuming you have a DataGridView named dataGridView1
         }
+
         private string ExcelfilePath = string.Empty;
         private string ConnectionString = string.Empty;
-        private List<string> tables = new List<string>();
-        private List<string> columnsOftable = new List<string>();
+        private List<string> tables = new();
+        private List<SqlColumnInfo> columnsOftable = new();
         private string? TableName = string.Empty;
+        private ExcelInfo excelInfo = new();
         private void btnSelectExcel_Click(object sender, EventArgs e)
         {
 
@@ -41,19 +45,19 @@ namespace DbImporter
             }
             lblLocation.Text = ExcelfilePath;
 
-            ExcelInfo info = ExcelManager.GetExcelInfo(ExcelfilePath);
+            excelInfo = ExcelManager.GetExcelInfo(ExcelfilePath);
 
-            if (!info.Status)
+            if (!excelInfo.Status)
             {
                 MessageBox.Show("Excel has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
-            lblRows.Text = info.RowCount.ToString();
-            lblColumns.Text = info.ColumnCount.ToString();
+            lblRows.Text = excelInfo.RowCount.ToString();
+            lblColumns.Text = excelInfo.ColumnCount.ToString();
             //lblLocation.Text = filePath;
 
-            gridShowColumns.DataSource = info.ColInfos;
+            gridShowColumns.DataSource = excelInfo.ColInfos;
         }
 
         private void SQLConnect_Click(object sender, EventArgs e)
@@ -63,7 +67,7 @@ namespace DbImporter
 
             tables = SqlManager.GetTablesOfDatabase(ConnectionString);
             comboTables.Items.Clear();
-            comboTables.Items.Add("انتخاب جدول");
+            comboTables.Items.Add("Select Table");
 
             foreach (var table in tables)
             {
@@ -86,7 +90,7 @@ namespace DbImporter
             AddComboBoxColumn();
         }
 
-        private async void button1_Click(object sender, EventArgs e)
+        private async void btnImport_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(ExcelfilePath) || string.IsNullOrEmpty(ConnectionString))
             {
@@ -100,7 +104,6 @@ namespace DbImporter
 
             await Task.Run(async () =>
             {
-                var info = gridShowColumns.DataSource as List<ColInfo>;
 
                 DataTable? dataTable = ExcelManager.GetExcelList(ExcelfilePath);
 
@@ -129,7 +132,7 @@ namespace DbImporter
                     return;
                 }
 
-                if (info == null)
+                if (excelInfo == null || !excelInfo.ColInfos.Any())
                 {
                     loading.Visible = false;
                     MessageBox.Show("Table mapping info is empty", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -138,7 +141,7 @@ namespace DbImporter
 
                 if (rdtypetableNew.Checked)
                 {
-                    var check = await SqlManager.CreateTable(ConnectionString, TableName, info);
+                    var check = await SqlManager.CreateTable(ConnectionString, TableName, excelInfo.ColInfos);
 
                     if (!check)
                     {
@@ -148,7 +151,7 @@ namespace DbImporter
                     }
                 }
 
-                status = await SqlManager.InsertBulk(ConnectionString, TableName, info, dataTable);
+                status = await SqlManager.InsertBulk(ConnectionString, TableName, excelInfo.ColInfos, dataTable);
             });
 
             if (status)
@@ -169,6 +172,8 @@ namespace DbImporter
         {
             if (!rdtypetableSelect.Checked) return;
 
+            txtTableName.Text = string.Empty;
+            TableName = string.Empty;
             txtTableName.Enabled = false;
             comboTables.Enabled = true;
             AddComboBoxColumn();
@@ -180,6 +185,8 @@ namespace DbImporter
         {
             if (!rdtypetableNew.Checked) return;
 
+            comboTables.SelectedIndex = 0;
+            TableName = string.Empty;
             txtTableName.Enabled = true;
             comboTables.Enabled = false;
             AddTextBoxColumn();
@@ -194,6 +201,8 @@ namespace DbImporter
                 Name = "DatabaseColumnName",
                 DataPropertyName = "DatabaseColumnName", // Bind to the property in ColInfo class
                 DataSource = columnsOftable, // Provide data source for ComboBox items
+                ValueMember = "Name",
+                DisplayMember = "DisplayName",
                 Width = 250
             };
 

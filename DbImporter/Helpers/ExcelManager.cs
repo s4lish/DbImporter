@@ -16,7 +16,7 @@ namespace DbImporter.Helpers
                 ExcelWorksheet? current = workbook.Worksheets.FirstOrDefault();
                 if (current == null)
                     return info;
-                info.RowCount = current.Dimension.End.Row;
+                info.RowCount = current.Dimension.End.Row - 1;
                 info.ColumnCount = current.Dimension.End.Column;
                 info.Status = true;
 
