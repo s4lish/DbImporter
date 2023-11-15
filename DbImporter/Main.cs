@@ -20,28 +20,20 @@ namespace DbImporter
         private string? TableName = string.Empty;
         private InputInfo inputInfo = new();
         private FileTypeEnum fileTypeEnum;
-        private void btnSelectExcel_Click(object sender, EventArgs e)
+        private async void btnSelectExcel_Click(object sender, EventArgs e)
         {
 
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
                 openFileDialog.InitialDirectory = "c:\\";
                 openFileDialog.Filter = "Excel files (*.xlsx)|*.xlsx|CSV files (*.csv)|*.csv|Json files (*.json)|*.json";
-                openFileDialog.FilterIndex = 2;
-                openFileDialog.RestoreDirectory = true;
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = false;
 
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     //Get the path of specified file
                     InputfilePath = openFileDialog.FileName;
-
-                    //Read the contents of the file into a stream
-                    //var fileStream = openFileDialog.OpenFile();
-
-                    //using (StreamReader reader = new StreamReader(fileStream))
-                    //{
-                    //    fileContent = reader.ReadToEnd();
-                    //}
                 }
             }
             if (string.IsNullOrEmpty(InputfilePath)) return;
@@ -50,43 +42,58 @@ namespace DbImporter
 
             FileInfo fileInfo = new FileInfo(InputfilePath);
 
-
-            if (fileInfo.Extension == ".xlsx")
+            await Task.Run(() =>
             {
-                inputInfo = ExcelManager.GetExcelInfo(InputfilePath);
 
-                if (!inputInfo.Status)
+                if (fileInfo.Extension == ".xlsx")
                 {
-                    MessageBox.Show("Excel has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    inputInfo = ExcelManager.GetExcelInfo(InputfilePath);
+
+                    if (!inputInfo.Status)
+                    {
+                        MessageBox.Show("Excel has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    fileTypeEnum = FileTypeEnum.Excel;
+                }
+                else if (fileInfo.Extension == ".csv")
+                {
+                    inputInfo = CSVManager.GetCsvInfo(InputfilePath);
+                    if (!inputInfo.Status)
+                    {
+                        MessageBox.Show("csv file has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    fileTypeEnum = FileTypeEnum.CSV;
+
+                }
+                else if (fileInfo.Extension == ".json")
+                {
+                    inputInfo = JsonManager.GetJsonArrayInfo(InputfilePath);
+                    if (!inputInfo.Status)
+                    {
+                        MessageBox.Show("json file has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                    fileTypeEnum = FileTypeEnum.Json;
+                }
+                else
+                {
+                    lblLocation.Text = string.Empty;
+                    InputfilePath = string.Empty;
+                    MessageBox.Show("Not Support yet");
                     return;
                 }
-                fileTypeEnum = FileTypeEnum.Excel;
-            }
-            else if (fileInfo.Extension == ".csv")
-            {
-                inputInfo = CSVManager.GetCsvInfo(InputfilePath);
-                if (!inputInfo.Status)
-                {
-                    MessageBox.Show("csv file has problem", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
-                fileTypeEnum = FileTypeEnum.CSV;
 
-            }
-            else
-            {
-                lblLocation.Text = string.Empty;
-                InputfilePath = string.Empty;
-                MessageBox.Show("Not Support yet");
-                return;
-            }
 
+            });
 
             lblRows.Text = inputInfo.RowCount.ToString();
             lblColumns.Text = inputInfo.ColumnCount.ToString();
             //lblLocation.Text = filePath;
 
             gridShowColumns.DataSource = inputInfo.ColInfos;
+
         }
 
         private void SQLConnect_Click(object sender, EventArgs e)
@@ -106,6 +113,8 @@ namespace DbImporter
             comboTables.SelectedIndex = 0;
             lblStatus.Text = "Connected Successfully";
             lblStatus.ForeColor = Color.Green;
+            rdtypetableNew.Enabled = true;
+            rdtypetableSelect.Enabled = true;
 
         }
 
@@ -142,6 +151,11 @@ namespace DbImporter
                 {
                     dataTable = CSVManager.GetCsvList(InputfilePath);
                 }
+                else if (fileTypeEnum == FileTypeEnum.Json)
+                {
+                    dataTable = JsonManager.GetJsonlList(InputfilePath);
+                }
+
                 else
                 {
                     loading.Visible = false;

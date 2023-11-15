@@ -16,10 +16,11 @@ namespace DbImporter.Helpers
                 ExcelWorksheet? current = workbook.Worksheets.FirstOrDefault();
                 if (current == null)
                     return info;
-                info.RowCount = current.Dimension.End.Row - 1;
-                info.ColumnCount = current.Dimension.End.Column;
+                info.RowCount = current.Dimension.End.Row - 1; // find number of rows
+                info.ColumnCount = current.Dimension.End.Column; // find number of Columns
                 info.Status = true;
 
+                //list of all columns with their first rows
                 for (int col = 1; col <= current.Dimension.End.Column; col++)
                 {
                     info.ColInfos.Add(new ColInfo
