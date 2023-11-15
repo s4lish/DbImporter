@@ -144,7 +144,6 @@
             gridShowColumns.Columns.AddRange(new DataGridViewColumn[] { Number, HeaderName, FirstValue, type, DatabaseColumnName });
             gridShowColumns.Location = new Point(12, 215);
             gridShowColumns.Name = "gridShowColumns";
-            gridShowColumns.RowTemplate.Height = 25;
             gridShowColumns.Size = new Size(994, 471);
             gridShowColumns.TabIndex = 3;
             // 
@@ -224,7 +223,7 @@
             txtDatabase.Name = "txtDatabase";
             txtDatabase.Size = new Size(100, 23);
             txtDatabase.TabIndex = 8;
-            txtDatabase.Text = "VosulGas";
+            txtDatabase.Text = "Net7DB";
             // 
             // label3
             // 
@@ -240,9 +239,9 @@
             label4.AutoSize = true;
             label4.Location = new Point(174, 138);
             label4.Name = "label4";
-            label4.Size = new Size(69, 15);
+            label4.Size = new Size(66, 15);
             label4.TabIndex = 10;
-            label4.Text = "User name :";
+            label4.Text = "Username :";
             // 
             // label5
             // 
@@ -304,6 +303,7 @@
             // 
             rdtypetableSelect.AutoSize = true;
             rdtypetableSelect.Checked = true;
+            rdtypetableSelect.Enabled = false;
             rdtypetableSelect.Location = new Point(10, 175);
             rdtypetableSelect.Name = "rdtypetableSelect";
             rdtypetableSelect.Size = new Size(92, 19);
@@ -317,6 +317,7 @@
             // rdtypetableNew
             // 
             rdtypetableNew.AutoSize = true;
+            rdtypetableNew.Enabled = false;
             rdtypetableNew.Location = new Point(426, 175);
             rdtypetableNew.Name = "rdtypetableNew";
             rdtypetableNew.Size = new Size(85, 19);
