@@ -188,7 +188,7 @@ namespace DbImporter
                     return;
                 }
 
-                if (inputInfo == null || !inputInfo.ColInfos.Any())
+                if (inputInfo == null || inputInfo.ColInfos.All(x => string.IsNullOrEmpty(x.DatabaseColumnName)))
                 {
                     loading.Visible = false;
                     MessageBox.Show("Table mapping info is empty", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
