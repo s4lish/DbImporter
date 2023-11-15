@@ -13,7 +13,7 @@ This C# project allows you to import data from Excel, CSV, or JSON files into a 
 
 Before using the project, ensure the following prerequisites are met:
 
-- .NET Core 7 (8 soon) SDK installed
+- .NET Core 8 (before was 7) SDK installed
 - SQL Server instance available
 - EPPlus and System.Data.SqlClient packages installed (or use NuGet package manager to install)
 
