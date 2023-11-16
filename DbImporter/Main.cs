@@ -15,7 +15,7 @@ namespace DbImporter
 
         private string InputfilePath = string.Empty;
         private string ConnectionString = string.Empty;
-        private List<string> tables = new();
+        private List<string>? tables = new();
         private List<SqlColumnInfo> columnsOftable = new();
         private string? TableName = string.Empty;
         private InputInfo inputInfo = new();
@@ -96,12 +96,29 @@ namespace DbImporter
 
         }
 
-        private void SQLConnect_Click(object sender, EventArgs e)
+        private async void SQLConnect_Click(object sender, EventArgs e)
         {
+
+            if (string.IsNullOrEmpty(txtServer.Text) || string.IsNullOrEmpty(txtUsername.Text) || string.IsNullOrEmpty(txtPassword.Text) || string.IsNullOrEmpty(txtDatabase.Text))
+            {
+                MessageBox.Show("Connection Info are Empty. Check Username, password, Server Address and Database Name", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+
             ConnectionString = $"Server={txtServer.Text};Database={txtDatabase.Text};User Id={txtUsername.Text};Password={txtPassword.Text};";
+            tables = await SqlManager.GetTablesOfDatabase(ConnectionString);
 
+            if (tables == null)
+            {
+                comboTables.Items.Clear();
+                rdtypetableNew.Enabled = false;
+                rdtypetableSelect.Enabled = false;
+                lblStatus.Text = "Error has occurred";
+                lblStatus.ForeColor = Color.Red;
+                return;
+            }
 
-            tables = SqlManager.GetTablesOfDatabase(ConnectionString);
             comboTables.Items.Clear();
             comboTables.Items.Add("Select Table");
 
@@ -125,7 +142,29 @@ namespace DbImporter
 
             TableName = comboTables.SelectedItem.ToString();
             columnsOftable = await SqlManager.GetTableColumns(TableName ?? "", ConnectionString);
+
+            var columnsNotNullable = await SqlManager.FindDatetimeColumnsNotNullable(TableName ?? "", ConnectionString);
+
+            if (columnsNotNullable.Any())
+            {
+                foreach (var item in columnsNotNullable)
+                {
+                    inputInfo.ColInfos.Add(new ColInfo
+                    {
+                        Number = 0,
+                        HeaderName = item.Name,
+                        DatabaseColumnName = item.Name,
+                        FirstValue = "datetime567",
+                        type = typeof(DateTime),
+                    });
+                }
+
+                MessageBox.Show($"This Table Has Some Columns DateTime With Not Nullable({string.Join(',', columnsNotNullable.Select(x => x.Name).ToList())}).If you Don't Select, It will automaticly generate", "Problem", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
             AddComboBoxColumn();
+
+
         }
 
         private async void btnImport_Click(object sender, EventArgs e)

@@ -143,16 +143,19 @@
             gridShowColumns.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             gridShowColumns.Columns.AddRange(new DataGridViewColumn[] { Number, HeaderName, FirstValue, type, DatabaseColumnName });
             gridShowColumns.Location = new Point(12, 215);
+            gridShowColumns.MultiSelect = false;
             gridShowColumns.Name = "gridShowColumns";
+            gridShowColumns.RowHeadersVisible = false;
             gridShowColumns.Size = new Size(994, 471);
             gridShowColumns.TabIndex = 3;
             // 
             // Number
             // 
             Number.DataPropertyName = "Number";
-            Number.HeaderText = "Number";
+            Number.HeaderText = "#";
             Number.Name = "Number";
             Number.ReadOnly = true;
+            Number.Width = 50;
             // 
             // HeaderName
             // 
@@ -160,7 +163,7 @@
             HeaderName.HeaderText = "HeaderName";
             HeaderName.Name = "HeaderName";
             HeaderName.ReadOnly = true;
-            HeaderName.Width = 250;
+            HeaderName.Width = 150;
             // 
             // FirstValue
             // 
@@ -223,7 +226,7 @@
             txtDatabase.Name = "txtDatabase";
             txtDatabase.Size = new Size(100, 23);
             txtDatabase.TabIndex = 8;
-            txtDatabase.Text = "Net7DB";
+            txtDatabase.Text = "NLogsDb";
             // 
             // label3
             // 

@@ -6,28 +6,36 @@ namespace DbImporter.Helpers
 {
     public class SqlManager
     {
-        public static List<string> GetTablesOfDatabase(string connectionString)
+        public static async Task<List<string>?> GetTablesOfDatabase(string connectionString)
         {
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            try
             {
-
-                // Open the connection
-                connection.Open();
-
-                // Get the list of tables using a SQL query
-                DataTable tablesSchema = connection.GetSchema("Tables");
-
-                List<string> tables = new List<string>();
-                // Print the table names
-                foreach (DataRow row in tablesSchema.Rows)
+                using (SqlConnection connection = new SqlConnection(connectionString))
                 {
-                    string tableName = (string)row["TABLE_NAME"];
-                    tables.Add(tableName);
+                    // Open the connection
+                    await connection.OpenAsync();
+
+                    // Get the list of tables using a SQL query
+                    DataTable tablesSchema = await connection.GetSchemaAsync("Tables");
+
+                    List<string> tables = new List<string>();
+                    // Print the table names
+                    foreach (DataRow row in tablesSchema.Rows)
+                    {
+                        string tableName = (string)row["TABLE_NAME"];
+                        tables.Add(tableName);
+                    }
+
+                    return tables;
+
                 }
-
-                return tables;
-
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Problem");
+                return null;
+            }
+
 
         }
 
@@ -39,7 +47,7 @@ namespace DbImporter.Helpers
                 await connection.OpenAsync();
 
                 // Query to get column names
-                string query = $"SELECT COLUMN_NAME,DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}'";
+                string query = $"SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}'";
 
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
@@ -53,7 +61,44 @@ namespace DbImporter.Helpers
                             columnNames.Add(new SqlColumnInfo
                             {
                                 Name = reader["COLUMN_NAME"].ToString(),
-                                Type = reader["DATA_TYPE"].ToString()
+                                Type = reader["DATA_TYPE"].ToString(),
+                                Is_Nullable = reader["IS_NULLABLE"].ToString() == "YES",
+                                //PKey = reader["COLUMN_KEY"].ToString()
+
+                            });
+                        }
+                        return columnNames;
+                    }
+                }
+            }
+
+        }
+
+        public static async Task<List<SqlColumnInfo>> FindDatetimeColumnsNotNullable(string tableName, string connectionString)
+        {
+
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                await connection.OpenAsync();
+
+                // Query to get column names
+                string query = $"SELECT COLUMN_NAME,DATA_TYPE,IS_NULLABLE FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = '{tableName}' and IS_NULLABLE = 'No' and DATA_TYPE = 'datetime'";
+
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    using (SqlDataReader reader = await command.ExecuteReaderAsync())
+                    {
+                        List<SqlColumnInfo> columnNames = new List<SqlColumnInfo>();
+
+                        while (reader.Read())
+                        {
+                            columnNames.Add(new SqlColumnInfo
+                            {
+                                Name = reader["COLUMN_NAME"].ToString(),
+                                Type = reader["DATA_TYPE"].ToString(),
+                                Is_Nullable = reader["IS_NULLABLE"].ToString() == "YES",
+                                //PKey = reader["COLUMN_KEY"].ToString()
+
                             });
                         }
                         return columnNames;
@@ -146,6 +191,23 @@ namespace DbImporter.Helpers
         {
             try
             {
+
+                var checkdt = Colinfos.Where(x => x.FirstValue == "datetime567" && !Colinfos.Any(y => y.DatabaseColumnName == x.DatabaseColumnName && y.FirstValue != "datetime567")).ToList();
+                if (checkdt.Any())
+                {
+                    foreach (var item in checkdt)
+                    {
+
+                        dataTable.Columns.Add(item.HeaderName, typeof(DateTime));
+
+                        foreach (DataRow row in dataTable.Rows)
+                        {
+                            row[item.HeaderName] = DateTime.Now;
+                        }
+
+                    }
+
+                }
 
 
                 using (SqlConnection connection = new SqlConnection(connectionString))
